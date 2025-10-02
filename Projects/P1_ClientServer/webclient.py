@@ -3,20 +3,25 @@ I will also write a program to handle the request from the web client, a web ser
 
 import socket
 
-def webclient():
-    s = "hello world!"
-    b = s.encode("ISO-8859-1")
-    #create socket
-    socket.socket()
-    #connect socket to destination
-    b.connect("example.com", 80)
-    GET / HTTP/1.1
-    Host: example.comee
-    Connection: close
-    b.sendall()
-    d = b.recv(4096)
-    if len(d) == 0:
-        print("all done!")
-    b.close()
+#create socket and server
+clientSocket = socket.socket()
+server = (("google.com", 80))
 
-webclient()
+#connect socket to server
+clientSocket.connect(server)
+    
+#HTTP request
+request = "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n"
+
+#Send HTTP request
+clientSocket.sendall(request.encode("ISO-8859-1"))
+
+#receive the web response
+data = clientSocket.recv(4096)
+string = data.decode("ISO-8859-1")
+for char in string:
+    print(char, end='')
+
+clientSocket.close()
+        
+
