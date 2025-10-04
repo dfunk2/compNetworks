@@ -2,26 +2,37 @@
 I will also write a program to handle the request from the web client, a web server.'''
 
 import socket
+import sys
 
 #create socket and server
 clientSocket = socket.socket()
-server = (("google.com", 80))
+
+#specify a IP in the command line
+Host = sys.argv[1] 
+#default to port 80 unless specified in command line
+if len(sys.argv) > 2:
+    Port = int(sys.argv[2])
+else:
+    Port = 80
+server = (Host, Port)
 
 #connect socket to server
 clientSocket.connect(server)
     
 #HTTP request
-request = "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n"
+request = f"GET / HTTP/1.1\r\nHost: {Host}\r\nConnection: close\r\n\r\n"
 
 #Send HTTP request
 clientSocket.sendall(request.encode("ISO-8859-1"))
 
 #receive the web response
-data = clientSocket.recv(4096)
-string = data.decode("ISO-8859-1")
-for char in string:
-    print(char, end='')
-
+while True:
+    data = clientSocket.recv(4096)
+    str = data.decode("ISO-8859-1")
+    print(str, end='')
+    #server stop sending data
+    if len(str) == 0:
+        break
 clientSocket.close()
         
 
