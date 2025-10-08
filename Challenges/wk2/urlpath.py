@@ -15,10 +15,33 @@ def url(str):
             else:
                 #end of string
                 path += str[i]
-                return print('path: ', path)
+                print('path: ', path)
+                return path
     print('path: ', path)
+    return path
 
-url('https://example.com/')
-url('https://example.com/foo')
-url('https://example.com/bar.txt')
-url('https://example.com/baz/foo/bar.git')
+def fileExtension(path):
+    dot = '.'
+    fileExtension = ''
+    i = 0
+    j = 0
+    for i in range(len(path)):
+        if path[i] == dot:
+            j = i
+            while j + 1 < len(path):
+                fileExtension += path[j]
+                j += 1
+            print('file extension: ', fileExtension)
+        if path[i] != dot or i + 1 > len(path):
+            return print('[empty string]')
+
+
+
+path1 = url('https://example.com/')
+path2 = url('https://example.com/foo')
+path3 = url('https://example.com/bar.txt')
+path4 = url('https://example.com/baz/foo/bar.git')
+fileExtension(path1)
+fileExtension(path2)
+fileExtension(path3)
+#fileExtension(path4)
