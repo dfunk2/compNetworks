@@ -18,52 +18,56 @@ while True:
     newConnection = webServer.accept()
     newSocket = newConnection[0]
     
-    data = newSocket.recv(4096)
-    browserRequest = data.decode("ISO-8859-1")
-    
-    if(browserRequest.find("\r\n\r\n")):
-        #parse the request header from client to get file name
-        parsedData = browserRequest.split("\r\n")
+    try: 
+        data = newSocket.recv(4096)
+        browserRequest = data.decode("ISO-8859-1")
 
-        getLine = parsedData[0]
-        parts = getLine.split(' ')
-        method, path, protocol = parts
-        #parse path for filename 
-        fileName = os.path.split(path)[-1]
+        if("\r\n\r\n" in browserRequest):
+            #parse the request header from client to get file name and file extension
+            parsedData = browserRequest.split("\r\n")
+            getLine = parsedData[0]
 
-        #parse file name for file extension
-        fileExtension = os.path.splitext(fileName)
+            parts = getLine.split(' ')
+            method, pathVar, protocol = parts
+
+            fileName = os.path.split(pathVar)
+
+            fileExt = os.path.splitext(fileName[1])
 
         #build an http response packet w/file data in payload
-        if(fileExtension[1] in fileExt_MIME): 
-            contentType = fileExt_MIME[fileExtension[1]]
+        if(fileExt[1] not in fileExt_MIME): 
+            raise Exception("File extension not supported")
         
-        try:
-            with open(fileName, "rb") as fp:
-                payloadData = fp.read()
-                contentLength = len(payloadData)
-            
-        except:
-            error = (
-                "HTTP/1.1 404 Not Found\r\n"
-                "Content-Type: text/plain\r\n"
-                "Content-Length: 13\r\n"
-                "Connection: close\r\n"
-                "\r\n"
-                "404 not found\r\n"
-                
-                )
-            newSocket.sendall(error.encode("ISO-8859-1"))
-            newSocket.close()
-            continue
-       
+        contentType = fileExt_MIME[fileExt[1]]
+  
+        with open(fileName[1], "rb") as fp:
+            payloadData = fp.read()
+            contentLength = len(payloadData)
+
         #send the HTTP response back to the client
-        responseHeaders = (f"HTTP/1.1 200 OK\r\n"
-                    f"Content-Type: {contentType}\r\n"
-                    f"Content-Length: {contentLength}\r\n"
-                    f"Connection: close\r\n"
-                    f"\r\n"
+        responseHeaders = (
+            f"HTTP/1.1 200 OK\r\n"
+            f"Content-Type: {contentType}\r\n"
+            f"Content-Length: {contentLength}\r\n"
+            f"Connection: close\r\n"
+            f"\r\n"
         )
         newSocket.sendall(responseHeaders.encode("ISO-8859-1"))
         newSocket.sendall(payloadData)
+            
+    except:
+        error = (
+            "HTTP/1.1 404 Not Found\r\n"
+            "Content-Type: text/plain\r\n"
+            "Content-Length: 13\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "404 not found\r\n\r\n"
+        )
+        newSocket.sendall(error.encode("ISO-8859-1"))
         newSocket.close()
+    finally:
+         newSocket.close()
+
+       
+
