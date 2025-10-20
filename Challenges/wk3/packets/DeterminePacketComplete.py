@@ -11,7 +11,6 @@ test_data = (
     (b'', (False, None)),
 )
 
-#returns true 
 def packet_complete(data):
     # IMPLEMENT ME
     messageLen = len(data[2:])
@@ -26,7 +25,6 @@ def packet_complete(data):
 
 #receives data and returns a complete packet including the message length and any remaining bytes after that packet
 def packet_extract(data):
-    # IMPLEMENT ME
     headerLen = len(data[:2])
     unknown_messageLen = len(data[2:])
     
@@ -39,12 +37,10 @@ def packet_extract(data):
 
 for data, (expected_complete, expected_result) in test_data:
     
-    #prints the first value in the test_data tuple
     print(f"{'='*40}\nData: {data}\n{'-'*40}")
 
     complete = packet_complete(data)
 
-    #unaltered first value in the tuple
     print(f"Expected: {expected_complete}")
     print(f"     Got: {complete}")
 
@@ -52,8 +48,6 @@ for data, (expected_complete, expected_result) in test_data:
     assert(complete == expected_complete)
 
     #if we return true from packet_complete 
-    #then we extract the data
-    #then we compare expected result to the extracted result
     if complete:
         result = packet_extract(data)
         print(f"Expected: {expected_result}")
