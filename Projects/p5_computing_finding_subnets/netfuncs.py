@@ -16,8 +16,8 @@ def ipv4_to_value(ipv4_addr):
     """
     addr = ipv4_addr.split('.')
     addr_as_int = [int(n) for n in addr]
-    result = (addr_as_int[0] << 24 | addr_as_int[1] << 16 | addr_as_int[2] << 8 | addr_as_int[3])
-    return result
+    val_of_addr = (addr_as_int[0] << 24 | addr_as_int[1] << 16 | addr_as_int[2] << 8 | addr_as_int[3])
+    return val_of_addr
 
     
 
@@ -67,12 +67,13 @@ def get_subnet_mask_value(slash):
         if char == '/':
             num = int(slash[i+1:])
             #create the mask
-            ip_bytes = 32
-            left_over = ip_bytes - num
+            ip_bits = 32
+            left_over = ip_bits - num
             as_one_bits = (1 << num) - 1
-            result = as_one_bits << left_over
+            subnet_mask_int = as_one_bits << left_over
+            # print(bin(subnet_mask_int))
 
-            return result
+            return subnet_mask_int
 
     
 
@@ -102,9 +103,18 @@ def ips_same_subnet(ip1, ip2, slash):
     slash:  "/16"
     return: False
     """
+    val_of_addr1 = ipv4_to_value(ip1)
+    val_of_addr2 = ipv4_to_value(ip2)
+    mask_of_ip = get_subnet_mask_value(slash)
 
-    # TODO -- write me!
-    pass
+    network_num1 = val_of_addr1 & mask_of_ip
+    network_num2 = val_of_addr2 & mask_of_ip
+
+    if network_num1 == network_num2:
+        return True
+    else:
+        return False
+    
 
 def get_network(ip_value, netmask):
     """
@@ -116,9 +126,10 @@ def get_network(ip_value, netmask):
     netmask:  0xffffff00
     return:   0x01020300
     """
+    network_num = ip_value & netmask
+    # network_hex = network_num.to_bytes(4, "big")
+    return network_num
 
-    # TODO -- write me!
-    pass
 
 def find_router_for_ip(routers, ip):
     """
@@ -170,16 +181,24 @@ def my_tests():
     print("This is the result of my custom tests")
     print("-------------------------------------")
 
-    to_dec = ipv4_to_value("255.255.0.0")
-    print(to_dec)
+    # to_dec = ipv4_to_value("255.255.0.0")
+    # print(to_dec)
 
-    to_ip = value_to_ipv4(4294901760)
-    print(to_ip)
+    # to_ip = value_to_ipv4(4294901760)
+    # print(to_ip)
 
-    subnet_mask1 = get_subnet_mask_value("/16")
-    subnet_mask2 = get_subnet_mask_value("10.20.30.40/23")
-    print(subnet_mask1)
-    print(subnet_mask2)
+    # subnet_mask1 = get_subnet_mask_value("/16")
+    # subnet_mask2 = get_subnet_mask_value("10.20.30.40/23")
+    # print(subnet_mask1)
+    # print(subnet_mask2)
+
+    same_subnet1 = ips_same_subnet("10.23.121.17", "10.23.121.225", "/23")
+    print(same_subnet1)
+    same_subnet2 = ips_same_subnet("10.23.230.22", "10.24.121.225", "/16")
+    print(same_subnet2)
+    
+    network_num = get_network(0x01020304, 0xffffff00)
+    print(network_num)
 
 
 ## -------------------------------------------
