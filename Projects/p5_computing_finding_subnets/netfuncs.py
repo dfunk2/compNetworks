@@ -170,16 +170,20 @@ def find_router_for_ip(routers, ip):
     return: None
     """
 
-    # TODO -- write me!
-    pass
+    for router_ip, router_specs in routers.items():
+        slash = router_specs["netmask"]
+        same_subnet = ips_same_subnet(router_ip, ip, slash)
+        if same_subnet:
+            return router_ip
+    return None
 
 # Uncomment this code to have it run instead of the real main.
 # Be sure to comment it back out before you submit!
 
-def my_tests():
-    print("-------------------------------------")
-    print("This is the result of my custom tests")
-    print("-------------------------------------")
+# def my_tests():
+#     print("-------------------------------------")
+#     print("This is the result of my custom tests")
+#     print("-------------------------------------")
 
     # to_dec = ipv4_to_value("255.255.0.0")
     # print(to_dec)
@@ -187,18 +191,28 @@ def my_tests():
     # to_ip = value_to_ipv4(4294901760)
     # print(to_ip)
 
+
     # subnet_mask1 = get_subnet_mask_value("/16")
     # subnet_mask2 = get_subnet_mask_value("10.20.30.40/23")
     # print(subnet_mask1)
     # print(subnet_mask2)
 
-    same_subnet1 = ips_same_subnet("10.23.121.17", "10.23.121.225", "/23")
-    print(same_subnet1)
-    same_subnet2 = ips_same_subnet("10.23.230.22", "10.24.121.225", "/16")
-    print(same_subnet2)
+    # same_subnet1 = ips_same_subnet("10.23.121.17", "10.23.121.225", "/23")
+    # print(same_subnet1)
+    # same_subnet2 = ips_same_subnet("10.23.230.22", "10.24.121.225", "/16")
+    # print(same_subnet2)
     
-    network_num = get_network(0x01020304, 0xffffff00)
-    print(network_num)
+    # network_num = get_network(0x01020304, 0xffffff00)
+    # print(network_num)
+    # routers = {
+    #     "1.2.3.1": {"netmask": "/24"},
+    #     "1.2.4.1": {"netmask": "/24"}
+    # }
+
+    # router = find_router_for_ip(routers, "1.2.3.5")
+    # print(router)
+
+  
 
 
 ## -------------------------------------------
